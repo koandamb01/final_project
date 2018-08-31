@@ -1,0 +1,56 @@
+{% extends 'main/forms_layout.html' %}
+{% block content %}
+<div class="col-md-3 offset-4 sign-margin">
+    <form class="form-signin" action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <p style="text-align: center;"><a href="{% url 'home' %}" title="Go back to home page"><i class="fas fa-laptop-code fa-5x"></i></a></p>
+        <br />
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.extra_tags == 'login' %}
+                    <span class="text-danger">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <input type="email" name="email" class="form-control" placeholder="Email address" value="{{ request.session.email }}" autofocus>
+        <input type="password" name="password" class="form-control" placeholder="Password">
+        <a href="#" class="forgot" data-toggle="modal" data-target="#forgot_password">forgot?</a>                       
+        <div class="text-right">
+            <button class="btn btn-secondary" type="submit">Sign in</button>
+        </div>
+    </form>
+    <div class="box">
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" data-keyboard="false" data-backdrop="static" id="forgot_password" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="text-center">
+                    <p>Forgot your password?</p>
+                    <p>No worries, we'll send you a link to reset your password in no time.</p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="placeholder">
+                <form action="{% url 'send_reset_email' %}" id="form_forgot" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <p class="message text-success"></p>
+                        <input type="email" name="email" class="form-control" placeholder="Email address" id="email_input" autofocus>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="send_email">Send <i class="far fa-envelope"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

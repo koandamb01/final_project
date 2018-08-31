@@ -1,0 +1,22 @@
+
+{% load humanize %}
+{% for snippet in snippets %}
+<div class="code-header">
+    <a href="{% url 'snippet' snippet_id=snippet.id %}">{{ snippet.title }}</a>
+    <div class="row">
+        <div class="col 6 code-topics">
+            <ul>
+                <li><a class="category" href="{% url 'languages' lang=snippet.language %}">{{ snippet.language }}</a></li>
+                <li></li>
+            </ul>
+        </div>
+        <div class="col 6 code-post-info right">
+            <ul>
+                <li><span>posted {{ snippet.created_at|naturaltime }}</span></li>
+                <li><a href="{% url 'favorites' fav_user_id=snippet.poster.id snippet_id='first' %}">{{ snippet.poster.username }}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endfor %}
+   

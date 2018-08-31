@@ -1,0 +1,63 @@
+{% extends 'main/forms_layout.html' %}
+{% block content %}
+
+<div class="col-md-3 offset-4 sign-margin">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.extra_tags == 'register' %}
+                <span class="text-danger">{{ message }}</span>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    <form action="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        <p style="text-align: center;"><a href="{% url 'home' %}" title="Go back to home page"><i class="fas fa-laptop-code fa-5x"></i></a></p>
+        <br>
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.extra_tags == 'username' %}
+                    <span class="text-danger">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <input type="text" name="username" class="form-control" placeholder="Username" value="{{ request.session.username }}">
+
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.extra_tags == 'email' %}
+                    <span class="text-danger">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <input type="text" class="form-control" name="email" placeholder="Email" value="{{ request.session.email }}">
+
+
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.extra_tags == 'password' %}
+                    <span class="text-danger">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <input type="password" class="form-control" name="password" placeholder="Password">
+
+        
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.extra_tags == 'confirm_password' %}
+                    <span class="text-danger">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password">
+
+        <div class="text-right">
+            <button class="btn btn-secondary" type="submit">Sign up</button>
+        </div>
+    </form>
+    <div class="box">
+        <p>Already have an account? <a href="{% url 'signin' %}">Log in</a></p>
+    </div>
+</div>
+{% endblock %}

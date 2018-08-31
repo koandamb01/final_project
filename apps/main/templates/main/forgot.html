@@ -1,0 +1,22 @@
+{% extends 'main/forms_layout.html' %}
+{% block content %}
+
+<div class="col-md-6 offset-4 sign-margin center">
+    <form class="form-signin" action="{% url 'login' %}" method="POST">
+        <p class="text-center">Forgot your password?</p>
+        <p class="text-center">No worries, we'll send you a link to reset your password in no time.</p>
+        {% csrf_token %}
+        <br>
+        <div class="row">
+            <div class="col-md-7 offset-2">
+                <input type="email" name="email" class="form-control" placeholder="Email address" autofocus>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-secondary" type="submit">Send</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

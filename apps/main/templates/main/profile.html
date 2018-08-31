@@ -1,0 +1,54 @@
+{% extends 'main/profiles_layout.html' %}
+{% block content %}
+<div class="col s2 profile-box">
+    <p>My Information</p>
+    {% if messages %} 
+        {% for message in messages %} 
+            {% if message.extra_tags == 'info_error' %}
+                <p class="red-text">{{ message }}</p>
+            {% elif message.extra_tags == 'info_success' %}
+                <p class="green-text">{{ message }}</p>
+            {% endif %} 
+        {% endfor %} 
+    {% endif %}
+    <form action="{% url 'update_personal' %}" method="POST">
+        {% csrf_token %}
+        <div class="input-field">
+            <input value="{{ user.username }}" type="text" name="username">
+        </div>
+        <div class="input-field">
+            <input value="{{ user.email }}" type="email" name="email">
+        </div>
+        <button class="waves-effect waves-light btn-small right grey darken-3" type="submit">
+            <i class="material-icons right">update</i>Update
+        </button>
+    </form>
+    <br><br><br>
+    <p>My Password</p>
+    {% if messages %} 
+        {% for message in messages %} 
+            {% if message.extra_tags == 'pass_error' %}
+                <p class="red-text">{{ message }}</p>
+            {% elif message.extra_tags == 'pass_success' %}
+                <p class="green-text">{{ message }}</p>
+            {% endif %} 
+        {% endfor %} 
+    {% endif %}
+    <form action="{% url 'update_password' %}" method="POST">
+        {% csrf_token %}
+        <div class="input-field">
+            <input placeholder="Old Password" type="password" name="old_password">
+        </div>
+        <div class="input-field">
+            <input placeholder="New Password" type="password" name="password">
+        </div>
+        <div class="input-field">
+            <input placeholder="Confirm New Password" type="password" name="confirm_password">
+        </div>
+        
+        <button class="waves-effect waves-light btn-small right grey darken-3" type="submit">
+            <i class="material-icons right">update</i>Update
+        </button>
+    </form>
+</div>
+{% endblock %}

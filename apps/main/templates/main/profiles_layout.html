@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% load static %}
+    <link rel="icon" href="{% static 'main/images/snippet.ico' %}">
+    <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'main/rainbow/themes/css/monokai.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <title>Snippet - Profile</title>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper grey darken-3">
+                <!-- <a href="/" class="brand-logo right">Code Snippet</a> -->
+                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <li><a href="{% url 'home' %}"><i class="material-icons left">home</i></a></li>
+                    {% if is_profile == 'false' %}
+                        <li><span>{{ user.username }}'s Favorites</span></li>
+                    {% else %}
+                        <li><span>{{ user.username }}'s Profile</span></li>
+                    {% endif %}
+                </ul>
+                <ul class="right">
+                    <li>
+                        <a href="{% url 'contribute' %}"> <i class="material-icons left">share</i>Contribute</a>
+                    </li>
+                    {% if request.session.user_id %}
+                        <li><a href="{% url 'profile' snippet_id='first' %}"> <i class="material-icons left">person</i>Profile</a></li>
+                        <li><a href="{% url 'logout' %}"> <i class="material-icons left">settings_power</i>Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'signin' %}"> <i class="material-icons left">person</i>Sign in</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </div>
+<div id="placeholder">
+    <div class="row">
+        <div class="col s2 profile-box">
+            <p class="center">My snippets: </p>
+            <div class="row">
+                {% if is_profile == 'false' %} <!-- check if this is not the user profile -->
+                    {% if user.account_status == 0 %}
+                        <p class="red-text center">This account is private</p>
+                    {% endif %}
+                {% else %}
+                <p class="center">
+                    <a class="waves-effect waves-light btn-small grey darken-3 status" href="{% url 'change_status' %}">
+                        {% if user.account_status == 0 %}
+                            <i class="material-icons right">lock_outline</i>
+                            <span class="red-text">account is private</span>
+                        {% else %}
+                            <i class="material-icons right">lock_open</i>
+                            <span class="green-text">account is public</span>
+                        {% endif %}
+                    </a>
+                </p>
+                {% endif %}
+            </div>
+            {% if is_profile == 'true' %} <!-- logged in user profile snippets list -->
+                {% if messages %} 
+                    {% for message in messages %} 
+                        {% if message.extra_tags == 'account_status' %}
+                            <p class="red-text center">{{ message }}</p>
+                        {% endif %} 
+                    {% endfor %} 
+                {% endif %}
+                
+                {% for snippet in snippets %}
+                    <ul class="collection">
+                        <li class="collection-item"><a href="{% url 'profile' snippet_id=snippet.id %}">{{ snippet.title }}</a>
+                            <a class="right red-text" href="{% url 'remove_favorite' id=snippet.id %}"><i class="material-icons">delete</i></a>
+                        </li>
+                    </ul>
+                {% endfor %}
+            
+            {% elif user.account_status == 1 %} <!-- User favorites snippets list page -->
+                {% for snippet in snippets %}
+                    <ul class="collection">
+                        <li class="collection-item"><a href="{% url 'favorites' fav_user_id=request.session.fav_user_id snippet_id=snippet.id %}">{{ snippet.title }}</a></li>
+                    </ul>
+                {% endfor %}
+            {% endif %}
+        </div> 
+
+        {% if is_profile == 'true' or user.account_status == 1 %}
+        {% load humanize %}
+            <div class="col s8 profile-box">
+                {% if main_snippet %}
+                <div class="code-block">
+                    <h5>{{ main_snippet.title }}</h5>
+                    <p>{{ main_snippet.description }}</p>
+                    
+                    {% if main_snippet.language == 'jquery' %}
+                        <pre><code data-language="javascript">{{ main_snippet.snippet }}</code></pre>
+                    {% elif main_snippet.language == 'swift' %}
+                        <pre><code data-language="javascript">{{ main_snippet.snippet }}</code></pre>
+                    {% else %}
+                        <pre><code data-language="{{ main_snippet.language }}">{{ main_snippet.snippet }}</code></pre>
+                    {% endif %}
+
+                    <div class="row" style="margin-bottom: 0px;">
+                        <div class="col 6 code-topics">
+                            <ul>
+                                <li><a class="category" href="{% url 'languages' lang=main_snippet.language %}">{{ main_snippet.language }}</a></li>
+                                {% if request.session.user_id %}
+                                    {% if saved  %}
+                                        <li><i class="material-icons left">save</i>Saved</li>
+                                        <li></li>
+                                        {% for message in messages %} 
+                                            {% if message.extra_tags == 'add_favorite' %}
+                                                <li><span>{{ message }}</span></li>
+                                            {% endif %} 
+                                        {% endfor %} 
+                                    {% else %}
+                                        {% if is_profile == 'true' %} <!-- profile page-->
+                                            <li><a href="{% url 'add_favorite' snippet_id=main_snippet.id page='profile' %}" class="save"><i class="material-icons left">save</i><span>Save</span></a></li>
+                                        {% else %} <!-- favorites page-->
+                                            <li><a href="{% url 'add_favorite' snippet_id=main_snippet.id page='favorites' %}" class="save"><i class="material-icons left">save</i><span>Save</span></a></li>
+                                        {% endif %}
+                                        <li></li>
+                                    {% endif %}
+                                {% else %}
+                                    <li></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="col 6 code-post-info right">
+                            <ul>
+                                <li><span>posted {{ main_snippet.created_at|naturaltime }}</span></li>
+                                <li><a href="{% url 'favorites' fav_user_id=main_snippet.poster.id snippet_id='first' %}">{{ main_snippet.poster.username }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Code comments here -->
+                    <div class="row">
+                        <div class="col s11 offset-s1">
+                            <!-- Template loop start here -->
+                            <div id="comment-placeholder">
+                                {% for comment in main_snippet.snippet_comments.all %}
+                                    <a href="{% url 'favorites' fav_user_id=comment.commenter.id snippet_id='first' %}">{{ comment.commenter.username }}</a>
+                                    <p style="margin-top: 0px;">{{ comment.comment }}</p>
+                                {% endfor %}
+                            </div>
+                            <!-- Check if the user is login -->
+                            {% if request.session.user_id %}
+                                <span><a id="reply-btn">Reply</a></span>
+                            {% endif %}
+                            {% if messages %}
+                                <div class="row">
+                                    <form class="col s12" action="{% url 'post_comment' %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            {% for message in messages %}
+                                                {% if message.tags == 'success' %}
+                                                    <span class="green-text right">{{ message }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <div class="input-field col s10 offset-s1">
+                                                {% if is_profile == 'true' %}
+                                                    <input type="hidden" name="page" value="profile">
+                                                {% else %}
+                                                    <input type="hidden" name="page" value="favorites">
+                                                {% endif %}
+                                                <i class="material-icons prefix">mode_edit</i>
+                                                <input type="hidden" name="snippet_id" value="{{ main_snippet.id }}">
+                                                <textarea name="comment" class="materialize-textarea"></textarea>
+                                                <label for="textarea1">Comment</label>
+                                                {% for message in messages %}
+                                                    {% if message.tags == 'error' %}
+                                                        <span class="red-text">{{ message }}</span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <button type="submit" class="waves-effect waves-light btn-small right grey darken-3"><i class="material-icons right">send</i>Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% else %}
+                                <div class="row" id="comment_box">
+                                    <form class="col s12" action="{% url 'post_comment' %}" method="POST">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="input-field col s10 offset-s1">
+                                                {% if is_profile == 'true' %}
+                                                    <input type="hidden" name="page" value="profile">
+                                                {% else %}
+                                                    <input type="hidden" name="page" value="favorites">
+                                                {% endif %}
+                                                <i class="material-icons prefix">mode_edit</i>
+                                                <input type="hidden" name="snippet_id" value="{{ main_snippet.id }}">
+                                                <textarea name="comment" class="materialize-textarea"></textarea>
+                                                <label for="textarea1">Comment</label>
+                                                <button type="submit" class="waves-effect waves-light btn-small right grey darken-3"><i class="material-icons right">send</i>Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div> 
+        {% endif %}
+        {% block content %} {% endblock %}
+    </div>
+</div>
+
+<!-- Compiled and minified JavaScript -->
+{% load static %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<script src="{% static 'main/rainbow/dist/rainbow.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/generic.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/c.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/csharp.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/css.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/html.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/java.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/javascript.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/php.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/python.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/sql.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/json.js' %}"></script>
+<script src="{% static 'main/rainbow/src/language/ruby.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $(".dropdown-trigger").dropdown();
+
+        $('.status').hover(function(){
+            console.log("mouse enter")
+            var iText = $(this).children('i').text()
+            var spText = $(this).children('span').text()
+
+            if(spText == "account is private"){
+                $(this).children('i').text("lock_open")
+                $(this).children('span').text("make it public")
+            }else{
+                $(this).children('i').text("lock_outline")
+                $(this).children('span').text("make it private")
+            }
+    
+        },function(){
+            console.log("mouse leave")
+            var iText = $(this).children('i').text()
+            var spText = $(this).children('span').text()
+            
+            if(spText == "make it private"){
+                $(this).children('i').text("lock_open")
+                $(this).children('span').text("account is public")
+            }else{
+                $(this).children('i').text("lock_outline")
+                $(this).children('span').text("account is private")
+            }
+        });
+
+        Rainbow.color();
+    });
+
+    // comment reply button
+    $(document).on('click', '#reply-btn', function() {
+        $('#comment_box').show()
+    });
+    
+    $('.slider').slider({
+        full_width: true,
+        interval: 2000,
+        transition: 800,
+        duration: 2000,
+        height: 500
+    });
+
+</script>
+</body>
+
+</html>

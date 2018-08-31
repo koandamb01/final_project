@@ -1,0 +1,99 @@
+{% extends 'main/forms_layout.html' %}
+{% block content %}
+<div class="col-md-9 offset-2 contribution-margin">
+    <form action="{% url 'process_contribute' %}" method="POST">
+        {% csrf_token %}
+        <p style="text-align: center;"><a href="{% url 'home' %}" data-toggle="tooltip" data-placement="bottom" title="Go back to home page"><i class="fas fa-home fa-5x"></i></a></p>
+        <br>
+        {% if request.session.user_id %}
+            <input type="hidden" name="user_id" value="{{ request.session.user_id }}">
+        {% endif %}
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" name="title" class="form-control" placeholder="Title of your code snippet" value="{{ request.session.title }}">
+            </div>
+            <div class="col-md-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.extra_tags == 'title' %}
+                            <span class="text-danger">{{ message }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <select name="language_list" class="form-control">
+                    <option value="" selected disabled>What coding language is your snippet</option>
+                    {% for language in languages %}
+                        <option value="{{language }}">{{ language }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.extra_tags == 'language_list' %}
+                            <span class="text-danger">{{ message }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6 text-center">
+            <span class="text-danger">OR</span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" name="language" class="form-control" placeholder="Other language" value="{{ request.session.language }}">
+            </div>
+            <div class="col-md-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.extra_tags == 'language' %}
+                            <span class="text-danger">{{ message }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <textarea type="text" name="description" class="form-control" placeholder="Description what your code does here" rows="3">{{ request.session.description }}</textarea>
+            </div>
+            <div class="col-md-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.extra_tags == 'description' %}
+                            <span class="text-danger">{{ message }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <br>
+        <div class="col-md-12">
+            <div class="row">
+                <p class="text-right">Your snippet: </p>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if message.extra_tags == 'snippet' %}
+                            <span class="text-danger">{{ message }}</span>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <textarea name="snippet" class="editor" rows="20" cols="80">{{ request.session.snippet }}</textarea>
+        </div>
+        <br>
+        <div class="text-right">
+            <button class="btn btn-secondary" type="submit">Contribute</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

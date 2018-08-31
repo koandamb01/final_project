@@ -1,0 +1,91 @@
+{% extends 'main/layout.html' %}
+
+{% block head %}
+    {% if image_name %}
+    <title>Snippet Dojo - {{ image_name }}</title>
+    {% else %}
+        <title>Snippet Dojo</title>
+    {% endif %}
+{% endblock %}
+
+{% block search %}
+<li>
+    <div class="right row">
+        <div class="col s12 ">
+            <div class="row" id="topbarsearch">
+                <div class="input-field col s6 s12">
+                    <form action="/search" class="ajax_form">
+                        {% csrf_token %}
+                        <i class="material-icons prefix">search</i>
+                        <input type="text" name="search_input" placeholder="Quick Search" id="search-title" class="autocomplete white-text">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+{% endblock %}
+
+{% block content %}
+<div id="placeholder">
+    {% if image_name %}
+        <div class="search-box" style='background:url("/static/main/images/{{ image_name }}.jpg"); background-position: center; background-size: cover; background-repeat: no-repeat;'></div>
+    {% else %}
+        <div class="slider">
+            <ul class="slides">
+                <li><img src="static/main/images/home.jpg" alt="mysql"></li>
+                <li><img src="static/main/images/mysql.jpg" alt="mysql"></li>
+                <li><img src="static/main/images/css.jpg" alt="css"></li>
+                <li><img src="static/main/images/jquery.jpg" alt="jquery"></li>
+                <li><img src="static/main/images/mean.jpg" alt="mean"></li>
+                <li><img src="static/main/images/javascript.jpg" alt="javascript"></li>
+                <li><img src="static/main/images/python.jpg" alt="python"></li>
+            </ul>
+        </div>
+    {% endif %}
+    <div class="container snippet-box" id="search-results"><br>
+        {% load humanize %}
+        {% if snippets %}
+            {% for snippet in snippets %}
+                <div class="code-header">
+                    <a href="{% url 'snippet' snippet_id=snippet.id %}">{{ snippet.title }}</a>
+                    <div class="row">
+                        <div class="col 6 code-topics">
+                            <ul>
+                                <li><a class="category" href="{% url 'languages' lang=snippet.language %}">{{ snippet.language }}</a></li>
+                                <li></li>
+                            </ul>
+                        </div>
+                        <div class="col 6 code-post-info right">
+                            <ul>
+                                <li><span>posted {{ snippet.created_at|naturaltime }}</span></li>
+                                <li><a href="{% url 'favorites' fav_user_id=snippet.poster.id snippet_id='first' %}">{{ snippet.poster.username }}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h1>No {{ image_name }} snippets yet! <i class="far fa-sad-tear red-text"></i> </h1>
+            <h1>Be the first to share {{ image_name }} snippets to make me happy <i class="far fa-smile red-text"></i></h1>
+        {% endif %}
+    </div>
+</div>
+
+<footer class="page-footer white">
+    <div class="footer-copyright grey darken-4">
+        <div class="container">© 2018 Mohamed Koanda, All rights reserved
+        </div>
+        <div class="footer-social-icons">
+            <a class="modal-trigger" style="color:white;" href="#modal1"><span>About</span></a>
+            <ul class="social-icons">
+                <li><span class="social-icon">Follow me on</span></li>
+                <li><a href="https://www.facebook.com/MK11TurboJump" target="_blank" class="social-icon"> <i class="fab fa-facebook-f"></i></a></li>
+                <li><a href="https://www.linkedin.com/in/mohamed-koanda-67b231ba/" target="_blank" class="social-icon"> <i class="fab fa-linkedin-in"></i></a></li>
+                <li><a href="https://www.instagram.com/mk11turbojump/" target="_blank" class="social-icon"> <i class="fab fa-instagram"></i></a></li>
+                <li><a href="https://github.com/koandamb01/" target="_blank" class="social-icon"> <i class="fab fa-github"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+{% endblock %}
