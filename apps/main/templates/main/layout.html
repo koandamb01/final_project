@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% load static %}
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"> {% load static %}
     <link rel="icon" href="{% static 'main/images/snippet.ico' %}">
     <link rel="stylesheet" href="{% static 'main/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'main/css/footer.css' %}">
     <link rel="stylesheet" href="{% static 'main/rainbow/themes/css/monokai.css' %}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    {% block head %} {% endblock %}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+        crossorigin="anonymous"> {% block head %} {% endblock %}
 </head>
+
 <body>
     <!-- Dropdown Structure -->
     <ul id="dropdown1" class="dropdown-content">
         {% for language in navbar_languages %}
-            <li><a href="{% url 'languages' lang=language %}">{{ language }}</a></li>
+        <li><a href="{% url 'languages' lang=language %}">{{ language }}</a></li>
         {% endfor %}
     </ul>
     <div class="navbar-fixed">
@@ -41,40 +42,40 @@
                 </ul>
 
                 <ul class="right">
-                    {% block search %} {% endblock %}
+                    {% block search %} {% endblock %} {% if request.session.user_id %}
                     <li><a href="{% url 'contribute' %}"> <i class="material-icons left">share</i>Contribute</a></li>
-                    {% if request.session.user_id %}
-                        <li><a href="{% url 'profile' snippet_id='first' %}"> <i class="material-icons left">person</i>Profile</a></li>
-                        <li><a href="{% url 'logout' %}"> <i class="material-icons left">settings_power</i>Logout</a></li>
+                    <li><a href="{% url 'profile' snippet_id='first' %}"> <i class="material-icons left">person</i>Profile</a></li>
+                    <li><a href="{% url 'logout' %}"> <i class="material-icons left">settings_power</i>Logout</a></li>
                     {% else %}
-                        <li><a href="{% url 'signin' %}"> <i class="material-icons left">person</i>Sign in</a></li>
+                    <li><a href="{% url 'signin' %}"> <i class="material-icons left">person</i>Sign in</a></li>
                     {% endif %}
                 </ul>
             </div>
         </nav>
     </div>
 
-    {% block content %} {% endblock %}
+    {% block content %} {% endblock %} {% load static %}
 
-    {% load static %}
-
-  <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-    <div class="modal-content">
-      <h4>What is Snippet Dojo?</h4>
-      <h6>Find, Share, Build and Learn</h6>
-      <p>Founded in 2018, <a href="{% url 'home' %}">Snippet Dojo</a> is a web developer site, a new community for new developers to learn and share their knowledge. With Snippet Dojo, developers can help each others solve their coding problems by sharing their snippet code with the community.</p>
-      <p> <i>This is a beta version, I'm still working to improve and add more features.</i> </p>
-      <p><i>Please reports any bugs to <a href="mailto:snippetdojo@gmail.com">snippetdojo@gmail.com</a></i></p>
-      <p><i>Thank you for using <a href="{% url 'home' %}">Snippet Dojo.</a></i></p>
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>What is Snippet Dojo?</h4>
+            <h6>Find, Share, Build and Learn</h6>
+            <p>Founded in 2018, <a href="{% url 'home' %}">Snippet Dojo</a> is a web developer site, a new community for
+                new developers to learn and share their knowledge. With Snippet Dojo, developers can help each others solve
+                their coding problems by sharing their snippet code with the community.</p>
+            <p> <i>This is a beta version, I'm still working to improve and add more features.</i> </p>
+            <p><i>Please reports any bugs to <a href="mailto:snippetdojo@gmail.com">snippetdojo@gmail.com</a></i></p>
+            <p><i>Thank you for using <a href="{% url 'home' %}">Snippet Dojo.</a></i></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
     </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
-    </div>
-  </div>
 
-  <!-- JS links -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <!-- JS links -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
     <script src="{% static 'main/rainbow/dist/rainbow.js' %}"></script>
     <script src="{% static 'main/rainbow/src/language/generic.js' %}"></script>
@@ -92,7 +93,7 @@
     <script>
         var lang = "{{ image_name }}";
 
-        $(document).ready(function(){
+        $(document).ready(function () {
             $('.modal').modal();
         });
     </script>
